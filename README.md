@@ -1,6 +1,6 @@
-# healthy_posture
+# Health Posture Reminder
 
-A new Flutter project.
+Mobile app, reminding you to sit straight at your desk.
 
 ## Getting Started
 
