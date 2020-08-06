@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:healthy_posture/MessageGenerator.dart';
 import 'package:healthy_posture/NotificationPlugin.dart';
 
 void main() {
@@ -34,17 +35,29 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String _reminder = "";
+  bool _remindNotifications = true;
   @override
   void initState() {
     super.initState();
     notificationPlugin
         .setListenerForLowerVersions(onNotificationInLowerVersions);
     notificationPlugin.setOnNotificationClick(onNotificationClick);
+    setState(() {
+      _reminder = messageGeneratorPlugin.getMessage(false);
+      _remindNotifications = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
+    //Temporary. Remove at some point
+    setState(() {
+      _reminder = messageGeneratorPlugin.getMessage(false);
+    });
+
     return new Scaffold(
       body: new Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   new Container(
                     width: screenWidth * 0.65,
                     child: new Text(
-                      "It would be a shame if you'd get bad posture for sitting like a banana...",
+                      _reminder,
                       textAlign: TextAlign.center,
                       style: new TextStyle(
                           fontSize: 25.0,
@@ -81,7 +94,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        new Switch(onChanged: switchChanged, value: true),
+                        new Switch(
+                            onChanged: switchChanged,
+                            value: _remindNotifications),
                         new Padding(
                           padding:
                               const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 24.0),
@@ -103,8 +118,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        new Icon(Icons.settings,
-                            color: Theme.of(context).accentColor, size: 48.0),
+                        IconButton(
+                          icon: Icon(Icons.settings,
+                              color: Theme.of(context).accentColor, size: 30.0),
+                          tooltip: "App settings",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SettingsRoute()),
+                            );
+                          },
+                        ),
                         new Padding(
                           padding:
                               const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 24.0),
@@ -126,8 +151,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        new Icon(Icons.chat_bubble_outline,
-                            color: Theme.of(context).accentColor, size: 48.0),
+                        IconButton(
+                          icon: Icon(Icons.chat_bubble_outline,
+                              color: Theme.of(context).accentColor, size: 30.0),
+                          tooltip: "See messages",
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MessagesRoute()),
+                            );
+                          },
+                        ),
                         new Padding(
                           padding:
                               const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 24.0),
@@ -156,11 +191,53 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void switchChanged(bool value) {}
+  void switchChanged(bool value) {
+    setState(() {
+      _remindNotifications = value;
+    });
+  }
 
   onNotificationInLowerVersions(ReceivedNotification receivedNotification) {
     print('Notification Received ${receivedNotification.id}');
   }
 
   onNotificationClick(String payload) {}
+}
+
+class SettingsRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Settings"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            // Navigate back to first route when tapped.
+          },
+          child: Text('Go back!'),
+        ),
+      ),
+    );
+  }
+}
+
+class MessagesRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Messages"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            // Navigate back to first route when tapped.
+          },
+          child: Text('Go back!'),
+        ),
+      ),
+    );
+  }
 }
