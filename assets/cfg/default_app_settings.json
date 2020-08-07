@@ -1,0 +1,6 @@
+{
+    "allow_notifications": true,
+    "notification_interval": "10",
+    "notification_interval_unit": "minutes",
+    "sarcastic_reminders": "true" 
+}

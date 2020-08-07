@@ -5,7 +5,7 @@ class MessageGeneratorPlugin {
   var _sarcasticReminders = [
     "It would be a shame if you'd get bad posture for sitting like a banana...",
     "I'd rather be someone else, if I had a curved neck like you do",
-    "Wanna be a boomerang or damn human being?"
+    "Wanna be a boomerang or damn human being?",
   ];
   MessageGeneratorPlugin._();
 

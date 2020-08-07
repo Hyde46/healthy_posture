@@ -1,10 +1,38 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:healthy_posture/MessageGenerator.dart';
 import 'package:healthy_posture/NotificationPlugin.dart';
+import 'package:global_configuration/global_configuration.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!await doSettingsExist()) {
+    await GlobalConfiguration().loadFromAsset("default_app_settings");
+    await createSettingsFile();
+  } else {
+    var directory = await getApplicationDocumentsDirectory();
+    await GlobalConfiguration()
+        .loadFromPath(directory.path + "/app_settings.js");
+  }
   runApp(new MyApp());
+}
+
+doSettingsExist() async {
+  var directory = await getApplicationDocumentsDirectory();
+  var file = File(directory.path + "/app_settings.js");
+  print(file);
+  return await file.exists();
+}
+
+createSettingsFile() async {
+  var directory = await getApplicationDocumentsDirectory();
+  await File(directory.path + '/app_settings.js')
+      .writeAsString(jsonEncode(GlobalConfiguration().appConfig));
+  print("maybe created file");
 }
 
 class MyApp extends StatelessWidget {
@@ -45,18 +73,14 @@ class _MyHomePageState extends State<MyHomePage> {
     notificationPlugin.setOnNotificationClick(onNotificationClick);
     setState(() {
       _reminder = messageGeneratorPlugin.getMessage(false);
-      _remindNotifications = true;
+      _remindNotifications =
+          GlobalConfiguration().getBool("allow_notifications");
     });
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
-    //Temporary. Remove at some point
-    setState(() {
-      _reminder = messageGeneratorPlugin.getMessage(false);
-    });
 
     return new Scaffold(
       body: new Row(
@@ -195,6 +219,9 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _remindNotifications = value;
     });
+    GlobalConfiguration().updateValue("allow_notifications", value);
+    String config_file_json = jsonEncode(GlobalConfiguration().appConfig);
+    saveConfigJson(config_file_json);
   }
 
   onNotificationInLowerVersions(ReceivedNotification receivedNotification) {
@@ -202,6 +229,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   onNotificationClick(String payload) {}
+
+  Future<String> get _localPath async {
+    var directory;
+    if (!kIsWeb) {
+      directory = await getApplicationDocumentsDirectory();
+    } else {
+      print("In Web debug mode. Skipping...");
+      return null;
+    }
+
+    return directory.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/app_settings.json');
+  }
+
+  Future<File> saveConfigJson(String config_json) async {
+    final file = await _localFile;
+    return file.writeAsString('$config_json');
+  }
 }
 
 class SettingsRoute extends StatelessWidget {
