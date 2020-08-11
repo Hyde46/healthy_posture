@@ -1,4 +1,4 @@
-# Health Posture Reminder
+# PostureReminder App
 
 Mobile app, reminding you to sit straight at your desk.
 
