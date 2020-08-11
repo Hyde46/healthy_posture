@@ -1,6 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:io' show File, Platform;
-import 'package:flutter/material.dart';
 
 import 'package:rxdart/rxdart.dart';
 
@@ -25,7 +24,7 @@ class NotificationPlugin {
 
   initializePlatformSpecifics() {
     var initializeSettingsAndroid =
-        AndroidInitializationSettings('ic_launcher');
+        AndroidInitializationSettings('inflammation');
     var initializationSettingsIOS = IOSInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
@@ -77,13 +76,13 @@ class NotificationPlugin {
         payload: 'Test payload');
   }
 
-  Future<void> scheduleNotification(int time, String message) async {
+  Future<void> scheduleNotification(int id, int time, String message) async {
     var scheduledNotificationDateTime =
         new DateTime.now().add(new Duration(seconds: time));
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-      'CHANNEL_ID 1',
-      'CHANNEL_NAME 1',
-      'CHANNEL DESCRIPTION 1',
+      'CHANNEL_ID',
+      'CHANNEL_NAME',
+      'CHANNEL DESCRIPTION',
       importance: Importance.Max,
       priority: Priority.High,
       styleInformation: BigTextStyleInformation(''),
@@ -92,14 +91,14 @@ class NotificationPlugin {
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
-        0,
+        id,
         'Healthy Posture Reminder',
         message,
         scheduledNotificationDateTime,
         platformChannelSpecifics);
   }
 
-  Future<void> repeatNotification() async {
+  Future<void> repeatNotification(RepeatInterval interval) async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
       'CHANNEL_ID 2',
       'CHANNEL_NAME 2',
@@ -113,11 +112,25 @@ class NotificationPlugin {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(
       0,
-      'Repeating Test Title',
+      'Posture reminder',
       'Repeating Test Body',
-      RepeatInterval.EveryMinute,
+      interval,
       platformChannelSpecifics,
     );
+  }
+
+  Future<int> getPendingNotificationCount() async {
+    List<PendingNotificationRequest> p =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    return p.length;
+  }
+
+  Future<void> cancelNotification() async {
+    await flutterLocalNotificationsPlugin.cancel(0);
+  }
+
+  Future<void> cancelAllNotification() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 }
 

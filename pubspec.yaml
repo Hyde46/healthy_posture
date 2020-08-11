@@ -1,5 +1,5 @@
-name: healthy_posture
-description: A new Flutter project.
+name: PostureReminder
+description: Reminds you periodically of about your sitting posture.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -27,13 +27,12 @@ dependencies:
   rxdart: ^0.24.1
   path_provider: ^1.6.11
   global_configuration: ^1.5.0
+  shared_preferences: ^0.5.8
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
+  #firebase_admob: ^0.9.0+9
 
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -46,10 +45,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/cfg/
   #   - images/a_dot_ham.jpeg
-
+  assets:
+    - assets/inflammation.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

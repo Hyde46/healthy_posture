@@ -1,6 +1,6 @@
 {
-    "name": "healthy_posture",
-    "short_name": "healthy_posture",
+    "name": "PostureReminder",
+    "short_name": "PostureReminder",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

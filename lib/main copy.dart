@@ -1,4 +1,4 @@
-import 'dart:collection';
+/*import 'dart:collection';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:PostureReminder/MessageGenerator.dart';
 import 'package:PostureReminder/NotificationPlugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 void main() {
   runApp(new MyApp());
@@ -14,10 +15,10 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //SystemChrome.setEnabledSystemUIOverlays([]);
-    //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    //    statusBarColor: Colors.transparent,
-    //    statusBarBrightness: Brightness.light));
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.light));
     return new MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Generated App',
@@ -40,6 +41,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  //Adds stuff
+  InterstitialAd myInterstitial;
   // App Internals
   String _reminder = "";
   bool _showNotifications;
@@ -48,9 +51,43 @@ class _MyHomePageState extends State<MyHomePage> {
   int _sessionLength;
   bool _isSarcasticReminderText;
 
+  InterstitialAd buildInterstitialAd() {
+    return InterstitialAd(
+      adUnitId: InterstitialAd.testAdUnitId,
+      listener: (MobileAdEvent event) {
+        if (event == MobileAdEvent.failedToLoad) {
+          myInterstitial..load();
+        } else if (event == MobileAdEvent.closed) {
+          myInterstitial = buildInterstitialAd()..load();
+        }
+        print(event);
+      },
+    );
+  }
+
+  void showInterstitialAd() {
+    myInterstitial..show();
+  }
+
+  void showRandomInterstitialAd() {
+    Random r = new Random();
+    bool value = r.nextBool();
+
+    if (value == true) {
+      myInterstitial..show();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    /// Assign a listener.
+    var eventListener = (MobileAdEvent event) {
+      if (event == MobileAdEvent.opened) {
+        print("eventListener: The opened ad is clicked on.");
+      }
+    };
 
     /// Notification Plugin
     notificationPlugin
@@ -374,6 +411,8 @@ class _MyHomePageState extends State<MyHomePage> {
     if (value) {
       // Turn on repeated Notifications
       var interval = stringToInterval(_notificationInterval);
+      print("Turn on notifications");
+      print(interval);
     } else {
       // Turn off repeated notifications
       await notificationPlugin.cancelAllNotification();
@@ -406,7 +445,6 @@ class _MyHomePageState extends State<MyHomePage> {
         _reminder = messageGeneratorPlugin.getMessage(true);
       }
     });
-    print(_sessionLength);
     _saveBool("is_sarcastic_reminders", value);
   }
 
@@ -543,12 +581,10 @@ class _MyHomePageState extends State<MyHomePage> {
         await getBoolValuesSF("is_sarcastic_reminders") ?? true;
     String notificationInterval =
         await getStringValuesSF("notification_interval") ?? "Hourly";
-    int sessionLength = await getIntValuesSF("session_length") ?? 30;
     HashMap m = HashMap<String, dynamic>();
     m.putIfAbsent("allow_notifications", () => showNotifications);
     m.putIfAbsent("is_sarcastic_reminders", () => sarcasticReminders);
     m.putIfAbsent("notification_interval", () => notificationInterval);
-    m.putIfAbsent("session_length", () => sessionLength);
     return m;
   }
 }
@@ -571,3 +607,4 @@ class MessagesRoute extends StatelessWidget {
     );
   }
 }
+*/
