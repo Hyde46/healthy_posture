@@ -2,4 +2,4 @@
 
 Mobile app, reminding you to sit straight at your desk.
 
-![Preview](assets/posture_1.png)
+![Preview](https://github.com/Hyde46/healthy_posture/blob/master/assets/inflammation.png)
